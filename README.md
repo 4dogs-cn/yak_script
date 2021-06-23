@@ -8,3 +8,24 @@ Yak 是一门安全测试专用语言。可以用它来快速编写扫描器，�
 
 详细使用说明参考 网站 https://yaklang.github.io/yak-project-main-page/  
 
+
+
+```
+req, err = http.Post(
+        url,
+        http.useragent(http.uarand()),
+        http.header("Content-Type","application/x-www-form-urlencoded"),
+        http.body(sprintf("username=test&password=%s",check_poc)),
+        )
+    if err != nil {
+        return
+    }
+    if re.Match(parseStr(num1+num2),http.GetAllBody(req)){
+    	log.warn("S2_001 found !!!")
+    }else{
+        log.debug("S2_001 safe !!!")
+    }
+
+```
+
+![S2_001](./exp/struts2/md/S2_001.svg)
