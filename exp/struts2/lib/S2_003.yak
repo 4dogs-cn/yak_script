@@ -16,9 +16,9 @@ func poc(url){
 
     rsp_data = http.GetAllBody(req)
     if re.Match(random_str,rsp_data){
-        log.warn("S2_003 found !!!")
+        log.warn(url + " S2_003 found !!!")
     }else{
-        log.debug("S2_003 safe !!!")
+        log.debug(url + " S2_003 safe !!!")
     }
 
 }
@@ -36,7 +36,7 @@ func exp(url,cmd){
             return
         }
 
-        http.show(req)
+    println(string(http.GetAllBody(req)))
 }
 
 

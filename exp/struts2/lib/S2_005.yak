@@ -19,10 +19,10 @@ func poc(url){
 
         rsp_data = http.GetAllBody(req)
         if re.Match(random_str,rsp_data){
-            log.warn("S2_005 found !!!")
+            log.warn(url + " S2_005 found !!!")
             break
         }else{
-            log.debug("S2_005 safe !!!")
+            log.debug(url + " S2_005 safe !!!")
         }
     }
 }
@@ -44,7 +44,7 @@ func exp(url,cmd){
         return
     }
 
-    http.show(req)
+    println(string(http.GetAllBody(req)))
 
 
 }
@@ -52,7 +52,7 @@ func exp(url,cmd){
 
 
 if YAK_MAIN {
-    loglevel("debug")
+    loglevel("info")
     u = cli.String("u")
     file = cli.LineDict("f")
     cmd = cli.String("cmd")

