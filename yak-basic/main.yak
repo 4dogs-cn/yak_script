@@ -1,0 +1,8 @@
+func aaa(caller) {
+   println("aaa is called by", caller)
+}
+
+if YAK_MAIN {
+   println("i am in main.... block")
+   aaa("main")
+}

@@ -1,0 +1,6 @@
+for key, index := range [1,2,3] {
+    dump(key, index)
+}
+
+test := 123
+dump(test)

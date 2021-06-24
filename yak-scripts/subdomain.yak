@@ -1,0 +1,14 @@
+res, err = subdomain.Scan(cli.String("target"))
+die(err)
+
+f, err = file.TempFile("./")
+die(err)
+defer f.Close()
+
+println(str.f("OPEN: %v as file", f.Name()))
+
+for result := range res {
+    result.Show()
+    f.WriteLine(result.ToString())
+}
+

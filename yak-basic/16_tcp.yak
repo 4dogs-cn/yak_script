@@ -1,0 +1,39 @@
+// 设置日志的级别，方便我们看到 TCP 库的一些信息输出
+loglevel("info")
+
+// 启动一个 TCP 服务器，在 Goroutine 中异步启动
+go fn{
+    tcp.Serve("127.0.0.1", 8085, tcp.serverCallback(func(conn) {
+        println("真正的 TCP 服务器收到一个连接：", conn.RemoteAddr())
+        bytes, err := conn.RecvLen(4)
+        if err != nil {
+            conn.Close()
+            return
+        }
+        println("收到连接的前 4 个字符为", string(bytes))
+        println("发送一个 Hello World 给客户端")
+
+        conn.Send("你好，世界！Hello World from 127.0.0.1:8085")
+        println("发送成功了！")
+        conn.Close()
+    }))
+}
+
+// 启动一个 TCP 本地转发，把本地 9000 转发到 127.0.0.1:8085
+go fn{
+    tcp.Forward(9000, "127.0.0.1", 8085)
+}
+
+// 启动一个 TCP 连接，直接访问本地 9000 端口
+conn, err := tcp.Connect("127.0.0.1", 9000)
+die(err)
+
+desc(conn)
+
+// 发送一个消息给 9000 端口
+conn.Send("abdasdf this message from client")
+
+dump(conn.RecvStringTimeout(1))
+// 等待3秒观察日志
+sleep(3)
+

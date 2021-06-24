@@ -1,0 +1,148 @@
+/*
+构筑 FuzzHTTPRequest
+*/
+
+req, err := http.NewRequest("GET", "http://127.0.0.1:8080")
+die(err)
+
+reqBody := `GET / HTTP/1.1
+Host: 127.0.0.1:8082`
+ma
+for _, params := range [
+    []byte(reqBody),
+    reqBody,
+    req,
+] {
+    req, err := fuzz.HTTPRequest(params)
+    if err != nil {
+        println("参数错误: ")
+        dump(params)
+        die(err)
+    } else {
+        println(str.f("接收 %v 数据包成功", type(params)))
+    }
+}
+
+// fuzz.UrlsToHTTPRequests 案例1
+
+reqGroup, err = fuzz.UrlsToHTTPRequests("http://127.0.0.1:8082")
+die(err)
+reqs, err := reqGroup.Results()
+die(err)
+
+for _, req := range reqs {
+    http.show(req)
+}
+
+
+println("----------")
+// fuzz.UrlsToHTTPRequests 案例
+urls = `http://127.0.0.1:8082
+http://127.0.0.1:8083
+http://127.0.0.1:8084
+http://127.0.0.1:8085
+`
+reqGroup, err = fuzz.UrlsToHTTPRequests(str.ParseStringToLines(urls)...)
+die(err)
+reqs, err := reqGroup.Results()
+die(err)
+
+for _, req := range reqs {
+    http.show(req)
+}
+
+println("----------")
+// fuzz.UrlsToHTTPRequests 案例
+urls = `http://127.0.0.1:808{{int(5-8)}}
+http://127.0.0.1:8082`
+
+reqGroup, err = fuzz.UrlsToHTTPRequests(str.ParseStringToLines(urls)...)
+die(err)
+reqs, err := reqGroup.Results()
+die(err)
+
+for _, req := range reqs {
+    http.show(req)
+}
+
+
+println("----------")
+// fuzz.UrlsToHTTPRequests 案例
+urls = `127.0.0.1:808{{int(2-3)}}
+example.com
+example.com:8083
+192.168.1.1`
+
+reqGroup, err = fuzz.UrlsToHTTPRequests(str.ParseStringToLines(urls)...)
+die(err)
+reqs, err := reqGroup.Results()
+die(err)
+
+for _, req := range reqs {
+    http.show(req)
+}
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST", "HEAD",  "XXX").Show()
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzHTTPHeader("Cookie", "test={{randstr}}").
+    FuzzHTTPHeader("X-COSSSSS", ["AAAA", "BBBB"],).FuzzGetParams("aabc", "{{randint}}'").Show()
+
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzHTTPHeader("Cookie", "test={{randstr}}").
+    FuzzGetParamsRaw("a=123&b=12313hjklasdf").FuzzGetParams("c", "123").Show()
+
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzGetParams("c", "123").
+    FuzzPostParams("postParams", "{{randint(10,44,2)}}").
+    Show()
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzGetParams("c", "123").FuzzPostRaw("this is body with randstr {{randstr(10,10,3)}}").Show()
+
+
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzGetParams("c", "123").FuzzPostJsonParams("jsonKey1", "{{randstr(10,10,3)}}';)").Show()
+
+// 批量发起请求
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1:8082`)
+die(err)
+
+fReq := req.FuzzPath("/admin/admin{{int(1-4)}}.php")
+ch, err := httpool.Pool(fReq)
+die(err)
+
+for result := range ch {
+    dump(result)
+    println("-------------------------------------")
+}
+
+

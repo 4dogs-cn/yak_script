@@ -1,0 +1,54 @@
+
+// 创建一个临时文件
+f, err := file.TempFile("")
+die(err)
+println("我们创建了一个临时文件：", f.Name())
+
+// 往临时文件中写一个字符串
+println("写入一点随机字符串")
+f.Write("asdfasdf")
+
+// 记得脚本结束要关闭文件
+f.Close()
+
+// 我们验证我们的内容写成功了没？
+raw,  err := file.ReadFile(f.Name())
+die(err)
+
+println("我们写入的文件内容为：")
+
+// 展示写的结果
+dump(raw)
+
+println("----------------------")
+
+// 创建一些简单的函数
+f, err := file.OpenFile("_testFile.txt", file.O_CREATE|file.O_RDWR, 0777)
+die(err)
+f.Write("we write some Message \n\n\n\n\nasdfahsdfasdf Now\n")
+f.Close()
+file.Cat("_testFile.txt")
+file.Rm("_testFile.txt")
+
+
+println()
+println("--------------------")
+
+
+`for _, fileInfo := range file.Ls(".") {
+    dump(fileInfo.Path)
+}`
+
+
+// 创建一些简单的函数
+f, err := file.Open("_testFile.txt")
+die(err)
+f.Write("这个使用案例是针对  file.Open(`_testFile.txt`) 的，其实很简单\n")
+f.Close()
+file.Cat("_testFile.txt")
+file.Rm("_testFile.txt")
+
+f, err := file.Open("12_fileio.yak")
+die(err)
+dump(f.ReadLines())
+f.Close()

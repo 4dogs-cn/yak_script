@@ -1,0 +1,30 @@
+`res, err := servicescan.Scan("47.52.100.105/24", "22")
+die(err)
+
+for result := range res {
+    if !result.IsOpen() {
+        continue
+    }
+    println(result.String())
+}
+
+resultMatch, err := servicescan.ScanOne("47.52.100.248", 22)
+die(err)
+
+println(resultMatch)
+`
+
+res, err := servicescan.Scan(
+    "47.52.100.105/24", "80,8080",
+    servicescan.active(true), servicescan.all(),
+    servicescan.web())
+die(err)
+
+for result := range res {
+    if !result.IsOpen() {
+        continue
+    }
+    println(result.String())
+    printf("    %v\n", result.GetCPEs())
+}
+

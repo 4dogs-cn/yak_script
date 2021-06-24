@@ -1,0 +1,38 @@
+// 执行系统命令
+raw, err = exec.System("ls")
+die(err)
+println(string(raw))
+
+// 批量执行系统命令
+exec.SystemBatch(
+    `echo {{network:(192.168.1.1/24)}}:{{port:(1-2)}}`,
+    exec.callback(fn(i, results){
+        println(i, string(results))
+    }),
+)
+
+
+
+// 可以监控一个命令的标准输出流，每秒会执行一下传入的函数，
+exec.WatchOutput("ping 10.1.2.3", 10, fn(results) {
+    dump(string(results))
+    return true
+})
+/*
+(string) ""
+(string) (len=71) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\n"
+(string) (len=102) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\n"
+(string) (len=133) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\n"
+(string) (len=164) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\n"
+(string) (len=195) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\nRequest timeout for icmp_seq 4\n"
+(string) (len=226) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\nRequest timeout for icmp_seq 4\nRequest timeout for icmp_seq 5\n"
+(string) (len=257) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\nRequest timeout for icmp_seq 4\nRequest timeout for icmp_seq 5\nRequest timeout for icmp_seq 6\n"
+(string) (len=288) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\nRequest timeout for icmp_seq 4\nRequest timeout for icmp_seq 5\nRequest timeout for icmp_seq 6\nRequest timeout for icmp_seq 7\n"
+(string) (len=319) "PING 10.1.2.3 (10.1.2.3): 56 data bytes\nRequest timeout for icmp_seq 0\nRequest timeout for icmp_seq 1\nRequest timeout for icmp_seq 2\nRequest timeout for icmp_seq 3\nRequest timeout for icmp_seq 4\nRequest timeout for icmp_seq 5\nRequest timeout for icmp_seq 6\nRequest timeout for icmp_seq 7\nRequest timeout for icmp_seq 8\n"
+*/
+
+// 可以监控一个命令的标准错误流，使用用法同上
+//exec.WatchStderr("ping 10.1.2.3", 10, fn(results) {
+//    dump(string(results))
+//    return true
+//})

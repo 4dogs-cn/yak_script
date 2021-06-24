@@ -1,0 +1,22 @@
+go func{
+    dump("test")
+}
+
+
+results = synscan.Scan(
+    cli.String("target"),
+    cli.String("port"),
+    synscan.wait(3.1),
+)
+dump(results)
+
+go def{
+    dump("test")
+}
+
+
+go fn{
+    dump("test")
+}
+
+sleep(1)

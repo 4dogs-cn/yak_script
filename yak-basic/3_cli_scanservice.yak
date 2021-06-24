@@ -1,0 +1,34 @@
+// 使用命令行参数
+targets := cli.String("target")
+ports := cli.String("ports")
+concurrent := cli.Int("concurrent")
+
+if targets == "" {
+    die("empty target")
+}
+
+if ports == "" {
+    ports = "22,80,443,3306,8000-8002"
+}
+
+// 设置并发
+if concurrent <= 0 {
+    concurrent = 20
+}
+
+if jsonOutput == "" {
+    jsonOutput = "result.json"
+}
+
+printf("start scan %v  ports:%v\n", targets, ports)
+
+ch, err = servicescan.Scan(targets, ports, servicescan.concurrent(concurrent), )
+die(err)
+
+for result := range ch {
+    if result.IsOpen() {
+        println(result.String())
+    }
+}
+
+println("Scan Finished")

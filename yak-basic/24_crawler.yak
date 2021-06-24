@@ -1,0 +1,20 @@
+ch, err := crawler.Start(
+    "https://www.leavesongs.com",
+    crawler.maxRequest(200),
+    crawler.connectTimeout(3),
+)
+
+// 如果启动爬虫失败，则推出程序，抛出错误
+die(err)
+
+for result := range ch {
+    // 根据 result.Request 生成对应的 fuzzRequest
+    fuzzReq, err := fuzz.HTTPRequest(result.Request())
+    if err != nil {
+        continue
+    }
+
+    // 获取 fuzzRequest 生成 params
+    reqParams, err := fuzzReq.GetCommonParams()
+    params = append(params, reqParams...)
+}

@@ -1,0 +1,9 @@
+target = cli.String("target")
+intParam = cli.Int("int-param")
+
+println("我们接收到两个参数")
+println("--target: ", target)
+println("--target type: ", type(target))
+println()
+println("--ini-param: ", intParam)
+println("--ini-param type: ", type(intParam))

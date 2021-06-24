@@ -1,0 +1,15 @@
+// 链式调用
+req, err := fuzz.HTTPRequest(`GET /path-target HTTP/1.1
+Host: 127.0.0.1`)
+die(err)
+
+req.FuzzMethod("POST").FuzzPath("/path-{{randstr}}").FuzzGetParams("c", "123").FuzzCookie("cookieKey1", "{{randstr(10,10,3)}}')").Show()
+
+fReq = req.FuzzMethod("XXX")
+
+results, err := req.FuzzMethod("HEAD").Exec()
+die(err)
+
+for result := range results {
+    desc(result)
+}

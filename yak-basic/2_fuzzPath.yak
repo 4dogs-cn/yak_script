@@ -1,0 +1,25 @@
+
+
+fuzzer, err := fuzz.HTTPRequest(`
+GET /?a=1 HTTP/1.1
+Host: www.baidu.com
+Connection: closed
+`)
+die(err)
+
+ret := fuzzer.FuzzGetParams("a", "{{int(1-10)}}")
+reqs, err := ret.Results()
+die(err)
+
+res, err := httpool.Pool(reqs, httpool.perRequestTimeout(5))
+die(err)
+
+for _, result = range res {
+    http.show(result.request)
+    if result.error == nil {
+        println(string(result.response))
+    }
+    println("---------------------------")
+    println("---------------------------")
+    println("---------------------------")
+}

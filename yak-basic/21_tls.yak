@@ -1,0 +1,29 @@
+// 生成一个 CA
+ca, key, err := tls.GenerateRootCA("Yak Test")
+die(err)
+
+// 使用 CA 和 KEY 签发一个 TLS 证书
+serverCert, serverKey, err := tls.SignServerCertAndKey(ca, key)
+die(err)
+
+// 签发一个客户端 TLS 证书
+clientCert, clientKey, err := tls.SignClientCertAndKey(ca, key)
+die(err)
+
+go tcp.Serve("127.0.0.1", 54326, tcp.serverTls(serverCert, serverKey), tcp.serverCallback(func(conn){
+    println("TLS Server RECV conn from: ", conn.RemoteAddr())
+    defer conn.Close()
+
+    conn.Send("Hello TLS Config")
+}))
+
+sleep(1)
+conn, err := tcp.Connect("127.0.0.1", 54326, tcp.clientTls(clientCert, clientKey))
+die(err)
+
+sleep(2)
+
+raw, err := conn.RecvString()
+die(err)
+
+println("Client RECV: ", raw)

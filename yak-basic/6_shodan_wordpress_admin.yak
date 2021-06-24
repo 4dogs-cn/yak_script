@@ -1,0 +1,48 @@
+shodanToken := cli.String("token")
+maxRecord := cli.Int("max-record")
+if maxRecord <= 0 {
+    maxRecord = 100
+}
+
+if shodanToken == "" {
+    println("empty shodan token")
+}
+
+println("fetch param：Shodan Key: ", shodanToken)
+println("start to query shodan data")
+// 查询 Shodan 的接口，获取 wordpress 的搜索结果
+ch, err := spacengine.ShodanQuery(shodanToken, "wordpress", spacengine.maxRecord(maxRecord))
+die(err)
+
+addrs = []
+for result := range ch {
+    printf("fetch shodan target: %v\n", result.Addr)
+    addrs = append(addrs, result.Addr)
+}
+
+println("为了简单教学，我们只取 10 个请求")
+// 为了简单，我们只取 10 个请求
+if len(addrs) > 10 {
+    addrs = addrs[:10]
+}
+
+println("start to build fuzz http requests")
+// 把搜索结果的 Addrs 转变成 Fuzz 请求组
+fuzzReqs, err := fuzz.UrlsToHTTPRequests(addrs...)
+die(err)
+
+println("start build requests with PATH: ", `/wp-admin/admin.php`)
+// 针对请求组，进行批量测试，请求 wp-admin/admin.php
+requests, err := fuzzReqs.FuzzPath("/wp-admin/admin.php").Results()
+die(err)
+
+println("stat to send http request batch...")
+loglevel("info")
+rsps, err := httpool.Pool(requests)
+die(err)
+
+for _, rspDict := range rsps {
+    if rspDict.response != nil {
+        printf("%v\n", string(rspDict.response))
+    }
+}

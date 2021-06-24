@@ -1,0 +1,21 @@
+pattern := `matchThis(.*?)txt`
+result := re.Match(pattern, `
+asdfas sdfa sdfa
+dsfasdfk;iopu34
+matchMatchMatchmatchThisasdfnkaopjryqeryjklijklojkloptxt
+`)
+if !result {
+    die("failed to match re:")
+}
+printf("pattern: %v 匹配成功\n", pattern)
+
+pattern := `matchThis(.*?)txt`
+result := re.Match(pattern, []byte(`
+asdfas sdfa sdfa
+dsfasdfk;iopu34
+matchMatchMatchmatchThisasdfnkaopjryqeryjklijklojkloptxt
+`))
+if !result {
+    die("failed to match re:")
+}
+printf("pattern: %v 匹配成功\n", pattern)

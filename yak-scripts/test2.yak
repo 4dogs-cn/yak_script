@@ -1,0 +1,33 @@
+func x(a) {
+    println("exec in x func, recv: ", a)
+}
+x("aaa")
+
+func argsTest1(vars...) {
+    println("argsTest1 recv: ", vars)
+}
+
+func argsTest(var1, vars...) {
+    println("var1: ", var1)
+    println("vars: ", vars)
+}
+
+argsTest1(123, 1, 2, 3, 4, 5)
+println("---------------------")
+argsTest(123, 1, 2, 3, 4, 5)
+
+
+func testFunc(arg1, args...) {
+    return 1, 2, arg1
+}
+
+rets = testFunc("test")
+println("rets = testFunc(`test`) -> rets: ", rets)
+println("---------------")
+ret1, ret2, ret3 = testFunc("aaa", "bbb", "ccc")
+println(`ret1, ret2, ret3 = testFunc("aaa", "bbb", "ccc")`)
+println("ret1: ", ret1)
+println("ret2: ", ret2)
+println("ret3: ", ret3)
+
+ret1, ret2 = testFunc("aaa", "bbb", "ccc")

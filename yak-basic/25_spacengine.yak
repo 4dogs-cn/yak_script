@@ -1,0 +1,13 @@
+apiKey := cli.String("token")
+
+res, err := spacengine.ShodanQuery(apiKey, "jenkins", spacengine.maxRecord(100))
+die(err)
+
+fpRes, err := servicescan.ScanFromSpaceEngine(res)
+die(err)
+
+for result := range fpRes {
+    println(result)
+}
+
+

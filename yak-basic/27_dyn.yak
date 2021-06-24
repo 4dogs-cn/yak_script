@@ -1,0 +1,14 @@
+dyn.Eval(`
+loglevel("info")
+log.info("this message is from eval %v", 1+1)
+`)
+
+vars, err := dyn.LoadVarFromFile("data/yak-basic/27_submod.yak", "abc")
+die(err)
+
+for _, res := range vars {
+    desc(res)
+    if dyn.IsYakFunc(res.Value) {
+        res.Value()
+    }
+}

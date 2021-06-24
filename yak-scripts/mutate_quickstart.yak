@@ -1,0 +1,3 @@
+for _, res = range fuzz.Strings("{{port:(12-24)}}") {
+    dump(res)
+}

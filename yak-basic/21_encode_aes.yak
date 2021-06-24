@@ -1,0 +1,4 @@
+data,err = codec.AesEncrypt([]byte("vdncloud123456"),[]byte("321423u9y8d2fwfl"))
+die(err)
+
+println(parseString(data))

@@ -1,0 +1,5 @@
+YAK_MOD = "asdfasdf"
+
+def abc() {
+    println("asdfasdfasdf")
+}

@@ -1,0 +1,18 @@
+res, err := synscan.Scan("47.52.100.105/24", "80,888,443,8080-8085,9000")
+die(err)
+
+openResults = []
+for result := range res {
+    openResults = append(openResults, result)
+    result.Show()
+}
+
+println("Open Ports: ", len(openResults))
+
+res, err := servicescan.ScanFromSynResult(openResults, servicescan.active(true), servicescan.web())
+die(err)
+
+for result := range res {
+    println(result.String())
+    println("    ", result.GetCPEs())
+}

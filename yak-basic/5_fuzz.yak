@@ -1,0 +1,33 @@
+// 预先设置一些想要 fuzz 的目标
+urls := [
+    "https://www.baidu123.com",
+    "https://qq123asfa.com/",
+    "https://exampleijasdf.com/",
+    "10.3.0.142:8082",
+    "abcdefadsfasdt.com",
+]
+
+// 根据 URL 生成可以用于 Fuzz 的 HTTP 请求组
+req, err := fuzz.UrlsToHTTPRequests(urls...)
+die(err)
+
+// 针对这些请求进行 Fuzz
+//    FuzzPath("/target-path")     可以针对 Path 进行变换
+//    FuzzMethod("GET", "POST")    针对 HTTP 请求的方法进行 Fuzz（使用 GET / POST）
+//    .Results()                   返回 Fuzz 的结果，([]*http.Request, error)
+reqs, err := req.FuzzPath("/target-path").FuzzMethod("GET", "POST").Results()
+die(err)
+
+// 请求池，可以同时对多个 request 请求进行访问，并返回结果
+rsps, err := httpool.Pool(reqs, httpool.size(10))
+die(err)
+
+// 简单展示一下请求的结果
+for _, rspDict := range rsps {
+    println("-----------------------")
+    if rspDict.error != nil {
+        printf("request error: %v for\n%v\n", rspDict.error, rspDict.request)
+    }else{
+        http.show(rspDict.response)
+    }
+}

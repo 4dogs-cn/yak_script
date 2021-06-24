@@ -1,0 +1,4 @@
+res, err := dyn.LoadVarFromFile("main.yak", "aaa")
+die(err)
+
+res[0].Value("foo.yak")

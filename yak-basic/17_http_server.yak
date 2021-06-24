@@ -1,0 +1,52 @@
+go die(httpserver.Serve("127.0.0.1", 8084, httpserver.handler(fn(rsp, req) {
+    http.show(req)
+    rsp.Write([]byte("Hello World From Server"))
+})))
+sleep(1)
+
+rsp, err := http.Get(
+    "http://127.0.0.1:8084/webhook",
+    http.body("test Code to webhook"),
+    http.useragent("test-ua"),
+)
+die(err)
+
+println()
+println("REQUEST RECV: ", )
+raw, err := io.ReadAll(rsp.Body)
+die(err)
+println(string(raw))
+
+println("asdfasdf")
+req, err = http.NewRequest("HEAD", "http://baidu.com/yourpath", http.header("BAR", "FOO"))
+die(err)
+
+http.show(req)
+
+rsp, err = http.Do(req)
+if err != nil {
+    die(err)
+}
+http.show(rsp)                                # 展示相应信息
+
+println("### `*http.Request` 标准 http 请求")
+
+println("```go")
+desc(req)
+println("```")
+
+println("### `*http.Response` 标准 http 响应")
+
+
+println("```go")
+desc(rsp)
+println("```")
+
+println("### `*_httpResult` 批量请求(`httpool`)的结果")
+
+ch, err := httpool.Pool([req], httpool.perRequestTimeout(1))
+die(err)
+
+for r := range ch {
+    desc(r)
+}

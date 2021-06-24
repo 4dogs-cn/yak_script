@@ -1,0 +1,17 @@
+# 快速指纹识别工具
+# @author v1ll4n
+
+loglevel("info")
+// 执行 yak data/yak-scripts/fingerprint_scan_quickstart.yak --target 47.52.100.105/24 --port 80 感受一下？
+targets = cli.String("target")
+port = cli.String("port")
+
+// 扫描多个端口
+res, err = servicescan.Scan(targets, port, servicescan.concurrent(50))
+die(err)
+
+for result = range res {
+    if result.IsOpen() {
+        println(result)
+    }
+}

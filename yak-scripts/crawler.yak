@@ -1,0 +1,15 @@
+# Palm Crawler 基础爬虫
+
+results, err = crawler.StartWebCrawler(context.New(), "https://www.leavesongs.com")
+die(err)
+
+urls = [];
+for result = range results {
+    if (result.Type == crawler.RSP) {
+        urls = append(urls, result.Data.Url)
+    }
+}
+
+for _, url = range urls {
+    println(url)
+}

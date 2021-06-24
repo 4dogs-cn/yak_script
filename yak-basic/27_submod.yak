@@ -1,0 +1,8 @@
+YAK_MOD = "testmod"
+
+testvar = 123
+
+func abc() {
+    log.info("print submod abc...")
+    println("am is submod.yak")
+}

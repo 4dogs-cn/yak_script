@@ -1,0 +1,9 @@
+abc = func() {
+    println("HELLO am in func abc()")
+}
+
+if YAK_MAIN {
+    println("main")
+    abc()
+}
+

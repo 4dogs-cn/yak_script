@@ -1,0 +1,7 @@
+vars, err := dyn.LoadVarFromFile("data/yak-basic/28_main.yak", "abc")
+die(err)
+
+for _, res := range vars {
+    res.Value()
+}
+

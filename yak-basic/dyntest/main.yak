@@ -1,0 +1,8 @@
+if YAK_MAIN {
+    res, err := dyn.LoadVarFromFile("poc", "abc")
+    die(err)
+
+    for _, poc := range res {
+        println(poc)
+    }
+}

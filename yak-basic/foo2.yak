@@ -1,0 +1,7 @@
+if YAK_MAIN {
+    aaa("foo2.yak")
+}
+
+func aaa(caller) {
+    println("foo2 's caller is ", caller)
+}

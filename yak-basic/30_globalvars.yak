@@ -1,0 +1,8 @@
+println("YAK_MAIN:", YAK_MAIN)
+println("YAK_FILENAME:", YAK_FILENAME)
+println("YAK_DIR:", YAK_DIR)
+
+poc, err := import("data/yak-basic/foo2", "aaa")
+die(err)
+
+poc.Callable() && poc.Value("call by 30_globalvars")

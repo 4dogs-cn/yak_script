@@ -1,0 +1,7 @@
+// >  yakc clitest.yak --url https://baidu.com
+strParam = cli.String("url")  
+
+dump(cli.Args())
+// 通过执行 dump(strParam) 可以看到参数类型与值
+//   (string) (len=17) "https://baidu.com"
+dump(strParam)

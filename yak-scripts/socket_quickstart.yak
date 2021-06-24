@@ -1,0 +1,16 @@
+# yak socket 快速库
+
+loglevel("info")
+target = cli.String("target")
+port = cli.Int("port")
+println("start to connect")
+conn, err = tcp.Connect(target, port, tcp.timeout(1.5))
+die(err)
+
+println("set timeout")
+conn.SetTimeout(5)
+
+raw, err = conn.RecvString()
+die(err)
+
+dump(raw)

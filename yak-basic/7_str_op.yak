@@ -1,0 +1,119 @@
+strValue := "this is a str"
+strValue2 := `this is a str block
+multi-lines
+and more...
+`
+
+println("strValue: ", strValue)
+println("strValue2: ", strValue2)
+
+strValue := "abcdefghijk"
+subStr1 := strValue[2:6]
+subStr2 := strValue[:6]
+subStr3 := strValue[3:]
+// subStr4 := strValue[-3:]   # 这个暂时是不支持的，如果遇到这种情况，请使用 subStr
+subStr4 := strValue[len(strValue)-3:]   # 这个暂时是不支持的，如果遇到这种情况，请使用 subStr4 := strValue[len(strValue)-3:]
+println("subStr1: ", subStr1)
+println("subStr2: ", subStr2)
+println("subStr3: ", subStr3)
+println("subStr4: ", subStr4)
+
+/*
+OUTPUT:
+
+subStr1:  cdef
+subStr2:  abcdef
+subStr3:  defghijk
+subStr4:  ijk
+*/
+
+println(str.EndsWith("abcdef", "abc"))  // false
+println(str.EndsWith("abcdef", "def"))  // true
+
+println(str.IsStrongPassword("abcdefghijk"))       // false
+println(str.IsStrongPassword("abc#52G"))           // false
+println(str.IsStrongPassword("abcdefgh.G1ijk"))    // true
+println(str.IsStrongPassword("abcdefghij.$t2Tk"))  // true
+
+println(str.HostPort("192.168.1.1", 80))
+println(str.HostPort("192.168.1.1", "80"))
+println(str.HostPort("example.com", 80))
+println(str.HostPort("[::1]", 80))
+println(str.HostPort("::1", 80))
+println(str.HostPort("127.0.0.1", 80))
+
+println()
+def printTwoResult(res) {
+    arg1, err = res;
+    if err != nil {
+        println("ERR:", err)
+    } else {
+        println(arg1)
+    }
+}
+printTwoResult(str.IPv4ToCClassNetwork("127.0.0.1"))
+printTwoResult(str.IPv4ToCClassNetwork("192.168.1.5"))
+printTwoResult(str.IPv4ToCClassNetwork("8.8.8.8"))
+printTwoResult(str.IPv4ToCClassNetwork("example.com"))
+printTwoResult(str.IPv4ToCClassNetwork("[::1]"))
+
+def printHostPortErr(res) {
+    host, port, err = res;
+    if err != nil {
+        println("ERROR: ", err)
+    }else{
+        printf("Host: %v Port: %v\n", host, port)
+    }
+}
+printHostPortErr(str.ParseStringToHostPort("example.com:80"))
+printHostPortErr(str.ParseStringToHostPort("127.0.0.1:80"))
+printHostPortErr(str.ParseStringToHostPort("https://example.com"))
+printHostPortErr(str.ParseStringToHostPort("http://example.com"))
+printHostPortErr(str.ParseStringToHostPort("http://example.com:8082"))
+printHostPortErr(str.ParseStringToHostPort("example.com"))
+printHostPortErr(str.ParseStringToHostPort("example"))
+printHostPortErr(str.ParseStringToHostPort("127.0.0.1"))
+
+println(str.IsIPv4("127.0.0.1")) // true
+println(str.IsIPv6("127.0.0.1")) // false
+println(str.IsIPv6("::1"))       // true
+println(str.IsIPv4("::1"))       // false
+
+println(str.ParseStringToHosts("baidu.com,127.0.0.1,192.168.1.2/28"))
+println(str.ParseStringToHosts("10.3.0.1/24,8.8.8.8,example.com"))
+println(str.ParseStringToHosts("example.com,example2.com"))
+
+dump(str.ParseStringToLines("123123123\nasdfasdf\nwfhiuqwe\nasdfasdf\r\nasdfasdf"))
+/*
+OUTPUT:
+
+([]string) (len=5 cap=8) {
+ (string) (len=9) "123123123",
+ (string) (len=8) "asdfasdf",
+ (string) (len=8) "wfhiuqwe",
+ (string) (len=8) "asdfasdf",
+ (string) (len=8) "asdfasdf"
+}
+*/
+
+println(str.ParseStringToPorts("22,3306,80-82,8080-8083"))
+println(str.ParseStringToPorts("8080-8083"))
+println(str.ParseStringToPorts("22,xx"))
+println(str.ParseStringToPorts("127.0.0.1/28"))
+
+
+println(str.ParseStringToUrls("www.baidu.com"))
+println(str.ParseStringToUrls("example.com"))
+println(str.ParseStringToUrls("example.com:80"))
+println(str.ParseStringToUrls("sdfaasdgasd"))
+println(str.ParseStringToUrls("127.0.1.1"))
+println(str.ParseStringToUrls("192.168.1.3:443"))
+println(str.ParseStringToUrls("192.168.1.3:80"))
+
+println(str.ParseStringToUrlsWith3W("www.baidu.com"))
+println(str.ParseStringToUrlsWith3W("example.com"))
+println(str.ParseStringToUrlsWith3W("example.com:80"))
+println(str.ParseStringToUrlsWith3W("sdfaasdgasd"))
+println(str.ParseStringToUrlsWith3W("127.0.1.1"))
+println(str.ParseStringToUrlsWith3W("192.168.1.3:443"))
+println(str.ParseStringToUrlsWith3W("192.168.1.3:80"))

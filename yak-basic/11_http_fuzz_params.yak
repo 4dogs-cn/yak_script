@@ -1,0 +1,26 @@
+rawPacket := `GET /target-path?a=value1&b=value2&c=value3 HTTP/1.1
+Host: 127.0.0.1:8082
+
+{"theJsonKey1": 123, "theJsonKey2": "asdfasdf"}`
+req, err := fuzz.HTTPRequest(rawPacket)
+die(err)
+
+params := req.GetCommonParams()
+for _, param := range params {
+    println("获取参数：", str.f("Position: %v ParamName: %v OriginValue: %v", param.Position(), param.Name(), param.Value()))
+    param.Fuzz("{{randstr}}").Show()
+}
+
+
+rawPacket := `GET /target-path?a=value1&b=value2&c=value3 HTTP/1.1
+Host: 127.0.0.1:8082
+
+{"theJsonKey1": 123, "theJsonKey2": "asdfasdf"}`
+req, err := fuzz.HTTPRequest(rawPacket)
+die(err)
+
+params := req.GetCommonParams()
+for _, param := range params {
+    println("获取参数：", str.f("Position: %v ParamName: %v OriginValue: %v", param.Position(), param.Name(), param.Value()))
+    param.Fuzz("{{randstr}}")
+}
