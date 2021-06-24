@@ -12,6 +12,12 @@ if YAK_MAIN {
     cmd = cli.String("cmd")
 
     debug = cli.Bool("debug" /*type: string*/)
+
+
+    if debug{
+
+        loglevel("debug")
+    }
     if u == "" && len(file)<1 {
         log.info("you need input target -u or -f")
         return

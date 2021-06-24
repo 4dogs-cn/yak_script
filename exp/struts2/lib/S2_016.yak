@@ -19,7 +19,7 @@ def exp(url,cmd){
 }
 
 def poc(url){
-    loglevel(`debug`)
+
 
     random_str = randstr(8)
     echo_data = str.Join(str.Split("echo " + random_str," "),"','")
