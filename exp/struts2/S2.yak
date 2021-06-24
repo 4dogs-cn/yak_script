@@ -1,0 +1,58 @@
+
+// log.info(YAK_FILENAME /*type: string*//*type ...[]interface {}*/)
+
+
+// poc,err = dyn.LoadVarFromFile(YAK_DIR+"/lib/","poc")
+
+
+if YAK_MAIN {
+    loglevel(`info`)
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    debug = cli.Bool("debug" /*type: string*/)
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    pocs,err = dyn.LoadVarFromFile(YAK_DIR+"/lib/" /*type: string*/, "poc")
+
+    die(err)
+
+    exps,err = dyn.LoadVarFromFile(YAK_DIR+"/lib/" /*type: string*/, "exp" /*type: string*/ /*type ...[]yak.yakEvalConfigOpt*/)
+
+
+    die(err)
+
+    if u != ""{
+        if cmd != ""{
+            for _,exp =range exps{
+                exp.Value(u,cmd)
+            }
+        
+        }else{
+
+            for _,poc = range pocs{
+                poc.Value(u)
+            }
+           
+        }
+        return
+    }
+
+    for _,u = range file{
+        if cmd !=""{
+            for _,exp = range exps{
+                exp.Value(u,cmd)
+            }
+        }else{
+            for _,poc = range pocs{
+                poc.Value(u)
+            }
+        }
+    }
+
+}
+
